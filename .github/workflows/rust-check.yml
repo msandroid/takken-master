@@ -1,0 +1,27 @@
+name: Rust checks
+on:
+  push:
+    paths:
+      - 'src/**'
+      - 'data/**'
+      - 'Cargo.toml'
+      - '.github/workflows/rust-check.yml'
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'data/**'
+      - 'Cargo.toml'
+      - '.github/workflows/rust-check.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Install Linux GUI dependencies
+        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev libasound2-dev libssl-dev
+      - run: cargo fmt --all
+      - run: cargo test
+      - run: cargo clippy --all-targets -- -D warnings
